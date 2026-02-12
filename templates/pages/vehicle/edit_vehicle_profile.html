@@ -1,0 +1,1314 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Editar Vehículos{% endblock %}
+
+{% block css %}
+    <link href="{% static 'css/floating.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/jquery.dataTables.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/responsive.dataTables.min.css' %}" rel="stylesheet" />
+{% endblock css %}
+
+{% block content %}
+<form class="form-horizontal" id="form" action="#" method="POST" enctype="multipart/form-data">
+{% csrf_token %}    
+
+<button type="submit" class="btn btn-primary save-float">Guardar</button>
+<a href="{% url 'manage_vehicles' %}" class="btn btn-secondary back-float">Regresar</a>
+
+<div class="app-content main-content mt-0">
+    <div class="side-app"> <!-- CONTAINER -->
+        <div class="main-container container-fluid"> <!-- PAGE-HEADER -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Detalles Vehículo {{vehiculo.placaPatente}}</h1>
+                </div>
+                <div class="ms-auto pageheader-btn">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Registro Vehicular</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Editar Vehiculo</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="card"> 
+                <div class="panel panel-primary">
+                    <div class="tab-menu-heading border-bottom-0"> 
+                        <div class="tabs-menu4 border-bottomo-sm"> 
+                            <!-- Tabs --> 
+                            <nav class="nav d-sm-flex d-block"> 
+                                <a id="nav25" class="nav-link border border-bottom-0 br-sm-5 me-2 active" data-bs-toggle="tab" href="#tab25">Datos Principales</a> 
+                                <a id="nav26" class="nav-link border border-bottom-0 br-sm-5 me-2" data-bs-toggle="tab" href="#tab26">Información Técnica</a>
+                                <a id="nav27" class="nav-link border border-bottom-0 br-sm-5 me-2" data-bs-toggle="tab" href="#tab27">Documentacíon del Vehículo</a>
+                                <a id="nav28" class="nav-link border border-bottom-0 br-sm-5 me-2" data-bs-toggle="tab" href="#tab28">Fotografías Exteriores</a>
+                                <a id="nav29" class="nav-link border border-bottom-0 br-sm-5 me-2" data-bs-toggle="tab" href="#tab29">Fotografías Interiores</a>
+                                <a id="nav30" class="nav-link border border-bottom-0 br-sm-5 me-2" data-bs-toggle="tab" href="#tab30">Historial Mantenimientos</a>
+                                {% if request.user.role == "ADMINISTRADOR" %} 
+                                <a id="nav31" class="nav-link border border-bottom-0 br-sm-5 me-2" data-bs-toggle="tab" href="#tab31">Historial Infracciones</a>
+                                {% endif %}
+                                <a id="nav32" class="nav-link border border-bottom-0 br-sm-5 me-2" data-bs-toggle="tab" href="#tab32">Historial Kilometrajes</a>
+                            </nav> 
+                        </div> 
+                    </div>
+                    <div class="panel-body tabs-menu-body"> 
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab25">
+                                <div class="row row-sm">
+                                    <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                                        <div class="card box-shadow-0">                        
+                                            <div class="card-body">
+                                                <h4 class="card-title">Datos Principales</h4>  
+                                                <input type="hidden" name="numero_placaPatente" value="{{ numero_placaPatente }}">
+                                                <div class="row row-sm">
+                                                    {{ formnuevovehiculo|crispy }}
+                                                </div>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab26"> 
+                                <div class="row row-sm" id="div_id_informacionTecnica">
+                                    <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                                        <div class="card box-shadow-0">   
+                                            <div class="card-body">
+                                                <h4 class="card-title">Información Técnica</h4>
+                                                <div class="row row-sm">
+                                                    {{ forminformaciontecnicavehiculo|crispy }}
+                                                </div>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row row-sm" id="div_id_ayudaTecnica">
+                                    <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                                        <div class="card box-shadow-0">   
+                                            <div class="card-body">
+                                                <h4 class="card-title">Ayuda Técnica</h4>
+                                                <div class="row row-sm">
+                                                    {{ formayudatecnicavehiculo|crispy }}
+                                                </div>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab27"> 
+                                <div class="row row-sm" id="div_id_fotografiasDocumentacion">
+                                    <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                                        <div class="card box-shadow-0">   
+                                            <div class="card-body">  
+                                                <h4 class="card-title">Documentación del Vehículo</h4>  
+                                                <div class="row">
+                                                    {% if request.user.role == "ADMINISTRADOR" %}
+                                                    <div id="div_id_fotografiaFacturaCompra" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Factura de Compra</h6>  
+                                                        {% if extensionFotografiaFacturaCompra == "imagen" %}
+                                                            <a href="{{ fotografiaFacturaCompra.url }}" target="_blank" id="hrefFacturaCompra">                                         
+                                                                <img src= "{{ fotografiaFacturaCompra.url }}"  value="{{ fotografiaFacturaCompra.url }}" id="imagenFacturaCompra" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaFacturaCompra == "pdf" %}
+                                                            <a href="{{ fotografiaFacturaCompra.url }}" target="_blank" id="hrefFacturaCompra">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenFacturaCompra" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaFacturaCompra.url }}" target="_blank" id="hrefFacturaCompra">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenFacturaCompra" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaFacturaCompra" id="fotografiaFacturaCompra" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-FacturaCompra" name="toggle-FacturaCompra" value="no" onclick="toggleSwitch('toggle-FacturaCompra')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>
+                                                    {% endif %}  
+                                                    <div id="div_id_fotografiaPadron" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Padrón Vehicular</h6>  
+                                                        {% if extensionFotografiaPadron == "imagen" %}
+                                                            <a href="{{ fotografiaPadron.url }}" target="_blank" id="hrefPadron">                                         
+                                                                <img src= "{{ fotografiaPadron.url }}"  value="{{ fotografiaPadron.url }}" id="imagenPadron" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaPadron == "pdf" %}
+                                                            <a href="{{ fotografiaPadron.url }}" target="_blank" id="hrefPadron">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenPadron" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaPadron.url }}" target="_blank" id="hrefPadron">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenPadron" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaPadron" id="fotografiaPadron" class="form-control foto-size">
+                                                            </div> 
+                                                        </div>   
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-Padron" name="toggle-Padron" value="no" onclick="toggleSwitch('toggle-Padron')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div>                      
+                                                    </div>                                  
+                                                    <div id="div_id_fotografiaPermisoCirculacion"class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Permiso de Circulación</h6>
+                                                        {% if extensionFotografiaPermisoCirculacion == "imagen" %}
+                                                            <a href="{{ fotografiaPermisoCirculacion.url }}" target="_blank" id="hrefPermisoCirculacion">                                         
+                                                                <img src= "{{ fotografiaPermisoCirculacion.url }}"  value="{{ fotografiaPermisoCirculacion.url }}" id="imagenPermisoCirculacion" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaPermisoCirculacion == "pdf" %}
+                                                            <a href="{{ fotografiaPermisoCirculacion.url }}" target="_blank" id="hrefPermisoCirculacion">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenPermisoCirculacion" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaPermisoCirculacion.url }}" target="_blank" id="hrefPermisoCirculacion">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenPermisoCirculacion" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaPermisoCirculacion" id="fotografiaPermisoCirculacion" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-PermisoCirculacion" name="toggle-PermisoCirculacion" value="no" onclick="toggleSwitch('toggle-PermisoCirculacion')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>  
+                                                    <div id="div_id_fotografiaRevisionTecnica" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Revisión Técnica</h6> 
+                                                        {% if extensionFotografiaRevisionTecnica == "imagen" %}
+                                                            <a href="{{ fotografiaRevisionTecnica.url }}" target="_blank" id="hrefRevisionTecnica">                                         
+                                                                <img src= "{{ fotografiaRevisionTecnica.url }}"  value="{{ fotografiaRevisionTecnica.url }}" id="imagenRevisionTecnica" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaRevisionTecnica == "pdf" %}
+                                                            <a href="{{ fotografiaRevisionTecnica.url }}" target="_blank" id="hrefRevisionTecnica">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenRevisionTecnica" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaRevisionTecnica.url }}" target="_blank" id="hrefRevisionTecnica">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenRevisionTecnica" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaRevisionTecnica" id="fotografiaRevisionTecnica" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-RevisionTecnica" name="toggle-RevisionTecnica" value="no" onclick="toggleSwitch('toggle-RevisionTecnica')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div> 
+                                                    <div id="div_id_fotografiaRevisionTecnicaGases" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Revisión Tecnica de Gases</h6> 
+                                                        {% if extensionFotografiaRevisionTecnicaGases == "imagen" %}
+                                                            <a href="{{ fotografiaRevisionTecnicaGases.url }}" target="_blank" id="hrefRevisionTecnicaGases">                                         
+                                                                <img src= "{{ fotografiaRevisionTecnicaGases.url }}"  value="{{ fotografiaRevisionTecnicaGases.url }}" id="imagenRevisionTecnicaGases" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaRevisionTecnicaGases == "pdf" %}
+                                                            <a href="{{ fotografiaRevisionTecnicaGases.url }}" target="_blank" id="hrefRevisionTecnicaGases">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenRevisionTecnicaGases" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaRevisionTecnicaGases.url }}" target="_blank" id="hrefRevisionTecnicaGases">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenRevisionTecnicaGases" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaRevisionTecnicaGases" id="fotografiaRevisionTecnicaGases" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-RevisionTecnicaGases" name="toggle-RevisionTecnicaGases" value="no" onclick="toggleSwitch('toggle-RevisionTecnicaGases')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>
+                                                    <div id="div_id_fotografiaSeguroObligatorio" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Seguro Obligatorio (SOAP)</h6> 
+                                                        {% if extensionFotografiaSeguroObligatorio == "imagen" %}
+                                                            <a href="{{ fotografiaSeguroObligatorio.url }}" target="_blank" id="hrefSeguroObligatorio">                                         
+                                                                <img src= "{{ fotografiaSeguroObligatorio.url }}"  value="{{ fotografiaSeguroObligatorio.url }}" id="imagenSeguroObligatorio" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaSeguroObligatorio == "pdf" %}
+                                                            <a href="{{ fotografiaSeguroObligatorio.url }}" target="_blank" id="hrefSeguroObligatorio">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenSeguroObligatorio" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaSeguroObligatorio.url }}" target="_blank" id="hrefSeguroObligatorio">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenSeguroObligatorio" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaSeguroObligatorio" id="fotografiaSeguroObligatorio" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-SeguroObligatorio" name="toggle-SeguroObligatorio" value="no" onclick="toggleSwitch('toggle-SeguroObligatorio')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>
+                                                    <div id="div_id_fotografiaSeguroAutomotriz" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Seguro Automotriz</h6>  
+                                                        {% if extensionFotografiaSeguroAutomotriz == "imagen" %}
+                                                            <a href="{{ fotografiaSeguroAutomotriz.url }}" target="_blank" id="hrefSeguroAutomotriz">                                         
+                                                                <img src= "{{ fotografiaSeguroAutomotriz.url }}"  value="{{ fotografiaSeguroAutomotriz.url }}" id="imagenSeguroAutomotriz" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaSeguroAutomotriz == "pdf" %}
+                                                            <a href="{{ fotografiaSeguroAutomotriz.url }}" target="_blank" id="hrefSeguroAutomotriz">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenSeguroAutomotriz" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaSeguroAutomotriz.url }}" target="_blank" id="hrefSeguroAutomotriz">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenSeguroAutomotriz" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaSeguroAutomotriz" id="fotografiaSeguroAutomotriz" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-SeguroAutomotriz" name="toggle-SeguroAutomotriz" value="no" onclick="toggleSwitch('toggle-SeguroAutomotriz')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>
+                                                    <div id="div_id_fotografiaCertificadoGps" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Certificado GPS</h6>  
+                                                        {% if extensionFotografiaCertificadoGps == "imagen" %}
+                                                            <a href="{{ fotografiaCertificadoGps.url }}" target="_blank" id="hrefCertificadoGps">                                         
+                                                                <img src= "{{ fotografiaCertificadoGps.url }}"  value="{{ fotografiaCertificadoGps.url }}" id="imagenCertificadoGps" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaCertificadoGps == "pdf" %}
+                                                            <a href="{{ fotografiaCertificadoGps.url }}" target="_blank" id="hrefCertificadoGps">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenCertificadoGps" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaCertificadoGps.url }}" target="_blank" id="hrefCertificadoGps">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenCertificadoGps" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaCertificadoGps" id="fotografiaCertificadoGps" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-CertificadoGps" name="toggle-CertificadoGps" value="no" onclick="toggleSwitch('toggle-CertificadoGps')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>
+                                                    <div id="div_id_fotografiaCertificadoMantencion" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Certificado Mantención</h6>  
+                                                        {% if extensionFotografiaCertificadoMantencion == "imagen" %}
+                                                            <a href="{{ fotografiaCertificadoMantencion.url }}" target="_blank" id="hrefCertificadoMantencion">                                         
+                                                                <img src= "{{ fotografiaCertificadoMantencion.url }}"  value="{{ fotografiaCertificadoMantencion.url }}" id="imagenCertificadoMantencion" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaCertificadoMantencion == "pdf" %}
+                                                            <a href="{{ fotografiaCertificadoMantencion.url }}" target="_blank" id="hrefCertificadoMantencion">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenCertificadoMantencion" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaCertificadoMantencion.url }}" target="_blank" id="hrefCertificadoMantencion">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenCertificadoMantencion" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaCertificadoMantencion" id="fotografiaCertificadoMantencion" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-CertificadoMantencion" name="toggle-CertificadoMantencion" value="no" onclick="toggleSwitch('toggle-CertificadoMantencion')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>
+                                                    <div id="div_id_fotografiaCertificadoOperatividad" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Certificado Operatividad</h6>  
+                                                        {% if extensionFotografiaCertificadoOperatividad == "imagen" %}
+                                                            <a href="{{ fotografiaCertificadoOperatividad.url }}" target="_blank" id="hrefCertificadoOperatividad">                                         
+                                                                <img src= "{{ fotografiaCertificadoOperatividad.url }}"  value="{{ fotografiaCertificadoOperatividad.url }}" id="imagenCertificadoOperatividad" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaCertificadoOperatividad == "pdf" %}
+                                                            <a href="{{ fotografiaCertificadoOperatividad.url }}" target="_blank" id="hrefCertificadoOperatividad">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenCertificadoOperatividad" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaCertificadoOperatividad.url }}" target="_blank" id="hrefCertificadoOperatividad">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenCertificadoOperatividad" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaCertificadoOperatividad" id="fotografiaCertificadoOperatividad" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-CertificadoOperatividad" name="toggle-CertificadoOperatividad" value="no" onclick="toggleSwitch('toggle-CertificadoOperatividad')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>
+                                                    <div id="div_id_fotografiaCertificadoGrua" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Certificado Grúa</h6>  
+                                                        {% if extensionFotografiaCertificadoGrua == "imagen" %}
+                                                            <a href="{{ fotografiaCertificadoGrua.url }}" target="_blank" id="hrefCertificadoGrua">                                         
+                                                                <img src= "{{ fotografiaCertificadoGrua.url }}"  value="{{ fotografiaCertificadoGrua.url }}" id="imagenCertificadoGrua" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaCertificadoGrua == "pdf" %}
+                                                            <a href="{{ fotografiaCertificadoGrua.url }}" target="_blank" id="hrefCertificadoGrua">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenCertificadoGrua" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaCertificadoGrua.url }}" target="_blank" id="hrefCertificadoGrua">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenCertificadoGrua" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaCertificadoGrua" id="fotografiaCertificadoGrua" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-CertificadoGrua" name="toggle-CertificadoGrua" value="no" onclick="toggleSwitch('toggle-CertificadoGrua')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div> 
+                                                    <div id="div_id_fotografiaCertificadoLamina" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Certificado de Lámina</h6>  
+                                                        {% if extensionFotografiaCertificadoLamina == "imagen" %}
+                                                            <a href="{{ fotografiaCertificadoLamina.url }}" target="_blank" id="hrefCertificadoLamina">                                         
+                                                                <img src= "{{ fotografiaCertificadoLamina.url }}"  value="{{ fotografiaCertificadoLamina.url }}" id="imagenCertificadoLamina" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaCertificadoLamina == "pdf" %}
+                                                            <a href="{{ fotografiaCertificadoLamina.url }}" target="_blank" id="hrefCertificadoLamina">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenCertificadoLamina" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaCertificadoLamina.url }}" target="_blank" id="hrefCertificadoLamina">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenCertificadoLamina" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaCertificadoLamina" id="fotografiaCertificadoLamina" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-CertificadoLamina" name="toggle-CertificadoLamina" value="no" onclick="toggleSwitch('toggle-CertificadoLamina')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>
+                                                    <div id="div_id_fotografiaCertificadoBarraAntiVuelco" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Certificado Barra AntiVuelco</h6>  
+                                                        {% if extensionFotografiaCertificadoBarraAntiVuelco == "imagen" %}
+                                                            <a href="{{ fotografiaCertificadoBarraAntiVuelco.url }}" target="_blank" id="hrefCertificadoBarraAntiVuelco">                                         
+                                                                <img src= "{{ fotografiaCertificadoBarraAntiVuelco.url }}"  value="{{ fotografiaCertificadoBarraAntiVuelco.url }}" id="imagenCertificadoBarraAntiVuelco" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaCertificadoBarraAntiVuelco == "pdf" %}
+                                                            <a href="{{ fotografiaCertificadoBarraAntiVuelco.url }}" target="_blank" id="hrefCertificadoBarraAntiVuelco">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenCertificadoBarraAntiVuelco" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaCertificadoBarraAntiVuelco.url }}" target="_blank" id="hrefCertificadoBarraAntiVuelco">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenCertificadoBarraAntiVuelco" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaCertificadoBarraAntiVuelco" id="fotografiaCertificadoBarraAntiVuelco" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-CertificadoBarraAntiVuelco" name="toggle-CertificadoBarraAntiVuelco" value="no" onclick="toggleSwitch('toggle-CertificadoBarraAntiVuelco')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>
+                                                    <div id="div_id_fotografiaDocumentacionMiniBus" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Documentación Transp. Privado</h6>  
+                                                        {% if extensionFotografiaDocumentacionMiniBus == "imagen" %}
+                                                            <a href="{{ fotografiaDocumentacionMiniBus.url }}" target="_blank" id="hrefDocumentacionMiniBus">                                         
+                                                                <img src= "{{ fotografiaDocumentacionMiniBus.url }}"  value="{{ fotografiaDocumentacionMiniBus.url }}" id="imagenDocumentacionMiniBus" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaDocumentacionMiniBus == "pdf" %}
+                                                            <a href="{{ fotografiaDocumentacionMiniBus.url }}" target="_blank" id="hrefDocumentacionMiniBus">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenDocumentacionMiniBus" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaDocumentacionMiniBus.url }}" target="_blank" id="hrefDocumentacionMiniBus">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenDocumentacionMiniBus" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaDocumentacionMiniBus" id="fotografiaDocumentacionMiniBus" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-DocumentacionMiniBus" name="toggle-DocumentacionMiniBus" value="no" onclick="toggleSwitch('toggle-DocumentacionMiniBus')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab28"> 
+                                <div class="row row-sm" id="div_id_fotografiasExterior">
+                                    <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                                        <div class="card box-shadow-0">   
+                                            <div class="card-body">  
+                                                <h4 class="card-title">Fotografías Exteriores del Vehículo</h4>  
+                                                <div class="row">
+                                                    <div id="div_id_fotografiaExteriorFrontis" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Fotografía Frontal</h6> 
+                                                        {% if extensionFotografiaExteriorFrontis == "imagen" %}
+                                                            <a href="{{ fotografiaExteriorFrontis.url }}" target="_blank" id="hrefExteriorFrontis">                                         
+                                                                <img src= "{{ fotografiaExteriorFrontis.url }}"  value="{{ fotografiaExteriorFrontis.url }}" id="imagenExteriorFrontis" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaExteriorFrontis == "pdf" %}
+                                                            <a href="{{ fotografiaExteriorFrontis.url }}" target="_blank" id="hrefExteriorFrontis">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenExteriorFrontis" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaExteriorFrontis.url }}" target="_blank" id="hrefExteriorFrontis">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenExteriorFrontis" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaExteriorFrontis" id="fotografiaExteriorFrontis" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-ExteriorFrontis" name="toggle-ExteriorFrontis" value="no" onclick="toggleSwitch('toggle-ExteriorFrontis')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>  
+                                                    <div id="div_id_fotografiaExteriorPiloto" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Fotografia Lado Conductor</h6> 
+                                                        {% if extensionFotografiaExteriorPiloto == "imagen" %}
+                                                            <a href="{{ fotografiaExteriorPiloto.url }}" target="_blank" id="hrefExteriorPiloto">                                         
+                                                                <img src= "{{ fotografiaExteriorPiloto.url }}"  value="{{ fotografiaExteriorPiloto.url }}" id="imagenExteriorPiloto" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaExteriorPiloto == "pdf" %}
+                                                            <a href="{{ fotografiaExteriorPiloto.url }}" target="_blank" id="hrefExteriorPiloto">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenExteriorPiloto" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaExteriorPiloto.url }}" target="_blank" id="hrefExteriorPiloto">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenExteriorPiloto" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaExteriorPiloto" id="fotografiaExteriorPiloto" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-ExteriorPiloto" name="toggle-ExteriorPiloto" value="no" onclick="toggleSwitch('toggle-ExteriorPiloto')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>  
+                                                    <div id="div_id_fotografiaExteriorCopiloto" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Fotografía Lado Copiloto</h6>  
+                                                        {% if extensionFotografiaExteriorCopiloto == "imagen" %}
+                                                            <a href="{{ fotografiaExteriorCopiloto.url }}" target="_blank" id="hrefExteriorCopiloto">                                         
+                                                                <img src= "{{ fotografiaExteriorCopiloto.url }}"  value="{{ fotografia.url }}" id="imagenExteriorCopiloto" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaExteriorCopiloto == "pdf" %}
+                                                            <a href="{{ fotografiaExteriorCopiloto.url }}" target="_blank" id="hrefExteriorCopiloto">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenExteriorCopiloto" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaExteriorCopiloto.url }}" target="_blank" id="hrefExteriorCopiloto">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenExteriorCopiloto" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaExteriorCopiloto" id="fotografiaExteriorCopiloto" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-ExteriorCopiloto" name="toggle-ExteriorCopiloto" value="no" onclick="toggleSwitch('toggle-ExteriorCopiloto')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>  
+                                                    <div id="div_id_fotografiaExteriorAtras" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Fotografía Portalón</h6>  
+                                                        {% if extensionFotografiaExteriorAtras == "imagen" %}
+                                                            <a href="{{ fotografiaExteriorAtras.url }}" target="_blank" id="hrefExteriorAtras">                                         
+                                                                <img src= "{{ fotografiaExteriorAtras.url }}"  value="{{ fotografiaExteriorAtras.url }}" id="imagenExteriorAtras" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaExteriorAtras == "pdf" %}
+                                                            <a href="{{ fotografiaExteriorAtras.url }}" target="_blank" id="hrefExteriorAtras">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenExteriorAtras" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaExteriorAtras.url }}" target="_blank" id="hrefExteriorAtras">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenExteriorAtras" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaExteriorAtras" id="fotografiaExteriorAtras" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-ExteriorAtras" name="toggle-ExteriorAtras" value="no" onclick="toggleSwitch('toggle-ExteriorAtras')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>  
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab29"> 
+                                <div class="row row-sm" id="div_id_fotografiasInterior">
+                                    <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                                        <div class="card box-shadow-0">   
+                                            <div class="card-body">  
+                                                <h4 class="card-title">Fotografías Interiores del Vehículo</h4>  
+                                                <div class="row">
+                                                    <div id="div_id_fotografiaInteriorTablero" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Fotografía Tablero</h6>  
+                                                        {% if extensionFotografiaInteriorTablero == "imagen" %}
+                                                            <a href="{{ fotografiaInteriorTablero.url }}" target="_blank" id="hrefInteriorTablero">                                         
+                                                                <img src= "{{ fotografiaInteriorTablero.url }}"  value="{{ fotografiaInteriorTablero.url }}" id="imagenInteriorTablero" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaInteriorTablero == "pdf" %}
+                                                            <a href="{{ fotografiaInteriorTablero.url }}" target="_blank" id="hrefInteriorTablero">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenInteriorTablero" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaInteriorTablero.url }}" target="_blank" id="hrefInteriorTablero">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenInteriorTablero" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaInteriorTablero" id="fotografiaInteriorTablero" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-InteriorTablero" name="toggle-InteriorTablero" value="no" onclick="toggleSwitch('toggle-InteriorTablero')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>  
+                                                    <div id="div_id_fotografiaInteriorCopiloto" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Fotografía Copiloto</h6>  
+                                                        {% if extensionFotografiaInteriorCopiloto == "imagen" %}
+                                                            <a href="{{ fotografiaInteriorCopiloto.url }}" target="_blank" id="hrefInteriorCopiloto">                                         
+                                                                <img src= "{{ fotografiaInteriorCopiloto.url }}"  value="{{ fotografiaInteriorCopiloto.url }}" id="imagenInteriorCopiloto" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaInteriorCopiloto == "pdf" %}
+                                                            <a href="{{ fotografiaInteriorCopiloto.url }}" target="_blank" id="hrefInteriorCopiloto">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenInteriorCopiloto" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaInteriorCopiloto.url }}" target="_blank" id="hrefInteriorCopiloto">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenInteriorCopiloto" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaInteriorCopiloto" id="fotografiaInteriorCopiloto" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-InteriorCopiloto" name="toggle-InteriorCopiloto" value="no" onclick="toggleSwitch('toggle-InteriorCopiloto')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div>  
+                                                    <div id="div_id_fotografiaInteriorAtrasPiloto" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Fotografía Atrás Conductor</h6>  
+                                                        {% if extensionFotografiaInteriorAtrasPiloto == "imagen" %}
+                                                            <a href="{{ fotografiaInteriorAtrasPiloto.url }}" target="_blank" id="hrefInteriorAtrasPiloto">                                         
+                                                                <img src= "{{ fotografiaInteriorAtrasPiloto.url }}"  value="{{ fotografiaInteriorAtrasPiloto.url }}" id="imagenInteriorAtrasPiloto" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaInteriorAtrasPiloto == "pdf" %}
+                                                            <a href="{{ fotografiaInteriorAtrasPiloto.url }}" target="_blank" id="hrefInteriorAtrasPiloto">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenInteriorAtrasPiloto" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaInteriorAtrasPiloto.url }}" target="_blank" id="hrefInteriorAtrasPiloto">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenInteriorAtrasPiloto" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaInteriorAtrasPiloto" id="fotografiaInteriorAtrasPiloto" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-InteriorAtrasPiloto" name="toggle-InteriorAtrasPiloto" value="no" onclick="toggleSwitch('toggle-InteriorAtrasPiloto')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div> 
+                                                    <div id="div_id_fotografiaInteriorAtrasCopiloto" class="card card-custom" style="width:250px">     
+                                                        <h6 class="form-group">Fotografía Atrás Copiloto</h6>  
+                                                        {% if extensionFotografiaInteriorAtrasCopiloto == "imagen" %}
+                                                            <a href="{{ fotografiaInteriorAtrasCopiloto.url }}" target="_blank" id="hrefInteriorAtrasCopiloto">                                         
+                                                                <img src= "{{ fotografiaInteriorAtrasCopiloto.url }}"  value="{{ fotografiaInteriorAtrasCopiloto.url }}" id="imagenInteriorAtrasCopiloto" class="imagen-size"> 
+                                                            </a>  
+                                                        {% elif extensionFotografiaInteriorAtrasCopiloto == "pdf" %}
+                                                            <a href="{{ fotografiaInteriorAtrasCopiloto.url }}" target="_blank" id="hrefInteriorAtrasCopiloto">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-pdf.png"  value="/media/documentacion_vehiculo/archivo-pdf.png" id="imagenInteriorAtrasCopiloto" class="imagen-size"> 
+                                                            </a>  
+                                                        {% else %}
+                                                            <a href="{{ fotografiaInteriorAtrasCopiloto.url }}" target="_blank" id="hrefInteriorAtrasCopiloto">                                         
+                                                                <img src= "/media/documentacion_vehiculo/archivo-otro.png"  value="/media/documentacion_vehiculo/archivo-otro.png" id="imagenInteriorAtrasCopiloto" class="imagen-size"> 
+                                                            </a>                                          
+                                                        {% endif %}         
+                                                        <div class="card-body card-body-custom">
+                                                            <div>
+                                                                <label for="foto" class="form-label"></label>
+                                                                <input type="file" name="fotografiaInteriorAtrasCopiloto" id="fotografiaInteriorAtrasCopiloto" class="form-control foto-size">
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <h6 class="form-group" style="display: flex; align-items: center; justify-content: space-around;">
+                                                                Eliminar Archivo? 
+                                                                <label class="switch">
+                                                                    <input type="checkbox" id="toggle-InteriorAtrasCopiloto" name="toggle-InteriorAtrasCopiloto" value="no" onclick="toggleSwitch('toggle-InteriorAtrasCopiloto')">
+                                                                    <span class="slider round"></span>
+                                                                </label>
+                                                            </h6> 
+                                                        </div> 
+                                                    </div> 
+                                                </div> 
+                                            </div>
+                                        </div>
+                                    </div>                
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab30">
+                                <div class="row row-sm"> 
+                                    <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                                        <div class="card box-shadow-0">                        
+                                            <div class="card-body">
+                                                <h4 class="card-title">Historial de Mantenimientos</h4>
+                                                <table id="datatable-allusers" class="display nowrap" style="width:100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>Fecha</th>
+                                                            <th>Estado</th>
+                                                            <th>Solicitante</th>
+                                                            <th>Faena</th>                                        
+                                                            <th>turno</th>
+                                                            <th>Acciones</th> 
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for solicitud in solicitudesMantenimiento %} 
+                                                            <tr>
+                                                                <td class="dtr-control"></td>
+                                                                <td>{{ solicitud.fechacreacion|date:"d-m-Y H:i" }}</td>
+                                                                <td>
+                                                                    {% for opcion in choicesprogreso %}
+                                                                        {% if solicitud.progreso == opcion.0 %} 
+                                                                            {{ opcion.1 }}
+                                                                        {% endif %}
+                                                                    {% endfor%}
+                                                                </td>
+                                                                <td>{{ solicitud.solicitante.first_name }} {{ solicitud.solicitante.last_name }}</td>
+                                                                <td>{{ solicitud.faena}}</td>
+                                                                <td>{% if solicitud.turno == '1' %}Turno A{% elif solicitud.turno == '2' %}Turno B{% endif %}</td>
+                                                                <form action="#"></form>
+                                                                <td class="form-inline-btn"> 
+                                                                    <form action="{% url 'edit_maintenance_request' %}" method="POST" >
+                                                                        {% csrf_token %}
+                                                                        <input type="hidden" name="solicitud_id" value="{{ solicitud.id }}">
+                                                                        <input type="hidden" name="origen_id" value="vehiculo">
+                                                                        <button type="submit" class="btn btn-info btn-size-adm">Revisar</button> 
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>                    
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if request.user.role == "ADMINISTRADOR" %} 
+                            <div class="tab-pane" id="tab31">
+                                <div class="row row-sm">
+                                    <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                                        <div class="card box-shadow-0">                        
+                                            <div class="card-body">
+                                                <h4 class="card-title">Agregar Infracción o Multa</h4>
+                                                <div class="row row-sm" id="id_form_penalty">
+                                                    {{ forminfracciones|crispy }}
+                                                    <button class="btn btn-primary" id="id_save_penalty">Agregar Infracción</button> 
+                                                </div>
+                                                
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div>
+                                <div class="row row-sm"> 
+                                    <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                                        <div class="card box-shadow-0">                        
+                                            <div class="card-body">
+                                                <h4 class="card-title">Historial de Infracciones</h4>
+                                                <table id="datatable-penalty" class="display nowrap" style="width:100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>Fecha</th>
+                                                            <th>Ciudad</th>
+                                                            <th>Infracción</th>
+                                                            <th>Estado</th>                                        
+                                                            <th>Valor</th>                         
+                                                            <th>Acciones</th> </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for infraccion in infracciones %} 
+                                                            <tr>
+                                                                <td class="dtr-control"></td>
+                                                                <td>{{ infraccion.fechaInfraccion|date:"d-m-Y" }}</td>
+                                                                <td>{{ infraccion.ciudadInfraccion }}</td>
+                                                                <td>{{ infraccion.infraccion }}</td>
+                                                                <td id="estado-{{ infraccion.id }}">{{ infraccion.estadoPagoInfraccion }}</td>
+                                                                <td class="cambiarNumero" style="text-align: right;" id="valor-{{ infraccion.id }}">{{ infraccion.valorInfraccion }}</td>
+                                                                <td>
+                                                                    {% if infraccion.estadoPagoInfraccion != 'Pagada' and infraccion.estadoPagoInfraccion != 'Anulada' %} 
+                                                                    <button type="button" 
+                                                                            class="btn btn-warning btn-size-edit btn-edit-penalty" 
+                                                                            data-id="{{ infraccion.id }}"
+                                                                            data-estado="{{ infraccion.estadoPagoInfraccion }}"
+                                                                            data-valor="{{ infraccion.valorInfraccion }}">
+                                                                        <i class="fa fa-edit"></i> Editar
+                                                                    </button>
+                                                                    {% else %}
+                                                                    <button type="button" 
+                                                                            class="btn btn-warning btn-size-edit disabled" disabled>
+                                                                        <i class="fa fa-edit"></i> Editar
+                                                                    </button>
+                                                                    {% endif %}
+                                                                </td>
+                                                        {% endfor %}
+                                                    </tbody>                    
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="tab-pane" id="tab32">
+                                <div class="row row-sm"> 
+                                    <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                                        <div class="card box-shadow-0">                        
+                                            <div class="card-body">
+                                                <h4 class="card-title">Historial de Kilometrajes</h4>
+                                                <table id="datatable-kilometrajes" class="display nowrap" style="width:100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>Fecha</th> 
+                                                            <th>Kilometraje</th>
+                                                            <th>Origen Registro</th>
+                                                            <th>Responsable</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for kilometraje in kilometrajes %} 
+                                                            <tr>
+                                                                <td class="dtr-control"></td>
+                                                                <td>{{ kilometraje.fechacreacion|date:"d-m-Y H:i" }}</td>
+                                                                <td class="cambiarNumero" style="text-align: right;">{{ kilometraje.kilometraje }} </td>
+                                                                <td>{{ kilometraje.origen }}</td>
+                                                                <td>{{ kilometraje.creador }}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>                    
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div> 
+                </div>
+            </div> 
+        </div>
+    </div>
+</div>
+</form>
+</div>
+</div>
+</form>  <div class="modal fade" id="editPenaltyModal" tabindex="-1" aria-labelledby="editPenaltyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPenaltyModalLabel">Editar Infracción</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditPenalty">
+                    <input type="hidden" id="edit_infraccion_id">
+                    <div class="mb-3">
+                        <label for="edit_estado" class="form-label">Estado de Pago</label>
+                        <select class="form-select form-control" id="edit_estado" name="edit_estado">
+                            <option value="Pendiente">PENDIENTE</option>
+                            <option value="Pagada">PAGADA</option>
+                            <option value="Anulada">ANULADA</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_valor" class="form-label">Valor ($)</label>
+                        <input type="text" class="form-control" id="edit_valor" name="edit_valor" placeholder="Ingrese valor">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn_update_penalty">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">        
+    document.getElementById('div_id_infraccion').classList.add('col-md-9');
+    document.getElementById('div_id_fechaInfraccion').classList.add('col-md-4');
+    document.getElementById('div_id_ciudadInfraccion').classList.add('col-md-4');
+    document.getElementById('div_id_estadoPagoInfraccion').classList.add('col-md-4');
+    document.getElementById('div_id_valorInfraccion').classList.add('col-md-4');
+    var reloadIndicator = localStorage.getItem('reloadIndicator');
+    if (reloadIndicator === 'true') {
+        document.getElementById('nav25').classList.remove('active');
+        document.getElementById('tab25').classList.remove('active');
+        document.getElementById('nav31').classList.add('active');
+        document.getElementById('tab31').classList.add('active');
+        localStorage.removeItem('reloadIndicator');
+    }
+</script>
+<script>
+    document.getElementById('id_save_penalty').disabled = true;
+    var campos = document.querySelectorAll('#id_form_penalty input, #id_form_penalty select, #id_form_penalty textarea');
+    var boton = document.getElementById('id_save_penalty');
+    campos.forEach(function(campo) {
+        campo.addEventListener('input', function() {
+            var camposCompletos = true;
+            campos.forEach(function(campo) {
+                if ((campo.tagName === 'INPUT' && campo.value.trim() === '') || 
+                    (campo.tagName === 'TEXTAREA' && campo.value.trim() === '') || 
+                    (campo.tagName === 'SELECT' && campo.value.trim() === '')) {
+                    camposCompletos = false;
+                }
+            });
+            boton.disabled = !camposCompletos;
+        });
+    });
+</script>
+<script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Buscar el nombre del cookie
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+<script>
+    function ocultarOpciones(opcion){
+        $.LoadingOverlay("show");
+        $.ajax({
+            url: '{% url 'hide_options_vehicle' %}',
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            data: {
+            'tipo_vehiculo': opcion,
+            },
+            dataType: 'json',                
+            success: function(data) {
+                $.LoadingOverlay("hide");
+                hideoptions(data.opciones);
+            },
+            error: function(error) {
+                $.LoadingOverlay("hide");
+                Swal.fire({
+                    icon: 'error',        
+                    titleText: 'Error al Ocultar las Opciones',
+                    text: 'Vuelva a intentarlo!',  
+                    confirmButtonColor: '#ff00d9',
+                })
+            }
+        });
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script type="application/javascript">
+    function initializeDataTable(selector) {
+        new DataTable(selector, {
+            columnDefs: [
+                {
+                    className: 'dtr-control',
+                    orderable: false,
+                    targets: 2
+                },
+            ],
+            language: {
+                url: '{% static "json/es-CL.json" %}',
+            },
+            columnDefs: [
+                { searchable: false, targets: [0] },
+                { orderable: false, targets: [0] }
+            ],
+            /*order: [1, 'asc'],*/
+            responsive: {
+                details: {
+                    type: 'column'
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeDataTable('#datatable-allusers');
+        initializeDataTable('#datatable-penalty');
+        initializeDataTable('#datatable-kilometrajes');
+    });
+</script>
+<script src="{% static 'js/uploadimagevehicle.js' %}"></script>
+<script src="{% static 'js/customvehicle.js' %}"></script>
+<script src="{% static 'js/formatmoney.js' %}"></script>
+<script>
+    document.getElementById('id_save_penalty').addEventListener('click', function(event) {
+        document.getElementById('id_save_penalty').disabled = true;
+        var patente = document.getElementById('id_placaPatente').value;
+        var fecha = document.getElementById('id_fechaInfraccion').value;
+        var ciudad = document.getElementById('id_ciudadInfraccion').value;
+        var infraccion = document.getElementById('id_infraccion').value;
+        var estado = $('#id_estadoPagoInfraccion').find('option:selected').text();
+        var valor = document.getElementById('id_valorInfraccion').value.replace(/\D/g, "");
+        $.LoadingOverlay("show");
+        $.ajax({
+            url: '{% url 'save_penalty' %}',
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            data: {
+                'patente': patente,
+                'fecha': fecha,
+                'ciudad': ciudad,
+                'infraccion': infraccion,
+                'estado': estado,
+                'valor': valor,
+            },
+            dataType: 'json',                
+            success: function(data) {
+                $.LoadingOverlay("hide");
+                Swal.fire({
+                    icon: 'success',        
+                    titleText: 'Infracción guardada con éxito!',
+                    text: 'La Página de Actualizará ',  
+                    confirmButtonColor: '#ff00d9',
+                }).then((result) => {
+                    document.getElementById('id_infraccion').classList.remove('changed');
+                    document.getElementById('id_fechaInfraccion').classList.remove('changed');
+                    document.getElementById('id_ciudadInfraccion').classList.remove('changed');
+                    document.getElementById('id_estadoPagoInfraccion').classList.remove('changed');
+                    document.getElementById('id_valorInfraccion').classList.remove('changed');
+                    localStorage.setItem('reloadIndicator', true);
+                    location.reload();
+                });
+                
+            },
+            error: function(error) {
+                $.LoadingOverlay("hide");
+                Swal.fire({
+                    icon: 'error',        
+                    titleText: 'Error al Guardar la infracción',
+                    text: 'Vuelva a intentarlo!',  
+                    confirmButtonColor: '#ff00d9',
+                });
+                document.getElementById('id_save_penalty').disabled = false;
+            }
+        });
+    });
+</script>
+<script type="text/javascript"> 
+    const form = document.querySelector('#form');
+    form.addEventListener('submit', (event) => {
+    event.preventDefault();        
+    const formData = new FormData(form);
+    $.LoadingOverlay("show");
+    $.ajax({
+        url: '{% url 'save_edit_vehicle_profile' %}',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            $.LoadingOverlay("hide");
+            Swal.fire({
+                icon: 'success',
+                title: 'Vehículo Actualizado con éxito!',
+                confirmButtonColor: '#ff00d9',
+            }).then(() => {
+                window.location.href = '{% url 'manage_vehicles' %}';
+            });
+        },
+        error: function(error) {
+            $.LoadingOverlay("hide");
+            Swal.fire({
+                icon: 'error',        
+                titleText: 'Error al Actualizar',
+                text: 'Vuelva a intentarlo!',  
+                confirmButtonColor: '#ff00d9',
+            })
+        }
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dispositivoSelect = document.getElementById("id_dispositivo");
+        const proveedorSelect = document.getElementById("id_proveedor");
+    
+        function toggleProveedor() {
+            if (dispositivoSelect.value === "false" || dispositivoSelect.value === "unknown") {
+                proveedorSelect.value = "";
+                proveedorSelect.setAttribute("disabled", "disabled"); 
+            } else {
+                proveedorSelect.removeAttribute("disabled");
+            }
+        }
+    
+
+        toggleProveedor();
+    
+
+        dispositivoSelect.addEventListener("change", toggleProveedor);
+    });
+    
+</script>
+<script>
+
+    $(document).on('click', '.btn-edit-penalty', function() {
+        var id = $(this).data('id');
+        var estado = $(this).data('estado');
+        var valor = $(this).data('valor');
+
+        $('#edit_infraccion_id').val(id);
+        
+        $('#edit_estado').val(estado); 
+        $('#edit_valor').val(valor);
+
+        var inputValor = document.getElementById('edit_valor');
+        if(inputValor && typeof formatMoney === 'function'){
+             inputValor.value = formatMoney(valor);
+        }
+
+        $('#editPenaltyModal').modal('show');
+    });
+
+    // 2. Enviar actualización al servidor
+    $('#btn_update_penalty').click(function() {
+        var id = $('#edit_infraccion_id').val();
+        var estado = $('#edit_estado').val();
+        var valor = $('#edit_valor').val().replace(/\D/g, "");
+
+        $('#btn_update_penalty').prop('disabled', true);
+        $.LoadingOverlay("show");
+
+        $.ajax({
+            url: '{% url "update_penalty" %}', 
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            data: {
+                'id': id,
+                'estado': estado,
+                'valor': valor
+            },
+            dataType: 'json',
+            success: function(data) {
+                $.LoadingOverlay("hide");
+                $('#editPenaltyModal').modal('hide');
+                
+                Swal.fire({
+                    icon: 'success',
+                    titleText: 'Infracción actualizada!',
+                    text: 'La página se recargará para reflejar los cambios.',
+                    confirmButtonColor: '#ff00d9',
+                }).then((result) => {
+                    localStorage.setItem('reloadIndicator', true);
+                    location.reload();
+                });
+            },
+            error: function(error) {
+                $.LoadingOverlay("hide");
+                $('#btn_update_penalty').prop('disabled', false);
+                Swal.fire({
+                    icon: 'error',
+                    titleText: 'Error al actualizar',
+                    text: 'No se pudo modificar la infracción. Intente nuevamente.',
+                    confirmButtonColor: '#ff00d9',
+                });
+            }
+        });
+    });
+    
+    const inputEditValor = document.getElementById('edit_valor');
+    if(inputEditValor) {
+        inputEditValor.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, "");
+            e.target.value = new Intl.NumberFormat('es-CL').format(value);
+        });
+    }
+</script>
+{% endblock javascript %}

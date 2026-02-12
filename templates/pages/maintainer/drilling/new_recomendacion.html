@@ -1,0 +1,280 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Ingreso Nueva Recomendación{% endblock %}
+
+{% block content %}
+
+<div class="app-content main-content mt-0">
+    <div class="side-app"> <!-- CONTAINER -->
+        <div class="main-container container-fluid"> <!-- PAGE-HEADER -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Nueva Recomendación</h1>
+                </div>
+                <div class="ms-auto pageheader-btn">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Mantenedor Sistema</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Nueva Recomendación</li>
+                    </ol>
+                </div>
+            </div> <!-- PAGE-HEADER END --> <!-- row -->
+            <div class="row row-sm">
+                <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12">
+                    <div class="card box-shadow-0">                        
+                        <div class="card-body">
+                            <h4 class="card-title">Datos Principales</h4>
+                            <p class="card-title">Atención: una vez creado no podrás eliminar este registro</p>
+                            <form class="form-horizontal" id="form" action="#" method="POST">
+                                {% csrf_token %}                                
+                                <div class="row row-sm">
+                                    {{ formnuevo|crispy }}
+                                </div>                                   
+                                <div class="form-group mt-3">
+                                    <div> 
+                                        <a class="btn btn-secondary" href="{% url 'manage_recomendacion' %}">Regresar</a> 
+                                        <button type="submit" class="btn btn-primary">Guardar</button>                                         
+                                    </div>
+                                </div>
+                            </form>
+                        </div>  
+                    </div>
+                </div>                
+            </div> 
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+    document.getElementById('div_id_campana').classList.add('col-md-4');
+    document.getElementById('div_id_programa').classList.add('col-md-4');
+    document.getElementById('div_id_recomendacion').classList.add('col-md-4');
+    document.getElementById('div_id_pozo').classList.add('col-md-4');
+    document.getElementById('div_id_sonda').classList.add('col-md-4');
+    document.getElementById('div_id_fecha_inicio').classList.add('col-md-4');
+    document.getElementById('div_id_sector').classList.add('col-md-4');
+    document.getElementById('div_id_azimut').classList.add('col-md-4');
+    document.getElementById('div_id_inclinacion').classList.add('col-md-4');
+    document.getElementById('div_id_este').classList.add('col-md-4');
+    document.getElementById('div_id_norte').classList.add('col-md-4');
+    document.getElementById('div_id_cota').classList.add('col-md-4');
+    document.getElementById('div_id_largo_programado').classList.add('col-md-4');
+    document.getElementById('div_id_estado').classList.add('col-md-4');
+</script>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // Seleccionar el formulario y todos los campos
+        const form = document.querySelector('#form');
+        const inputs = form.querySelectorAll('input, select, textarea');
+        const azimutField = document.getElementById("id_azimut");
+    
+        // Lista de campos obligatorios
+        const requiredFields = ["recomendacion", "pozo", "sonda", "fecha_inicio", "sector", "inclinacion"];
+    
+        // Función para validar un campo individualmente
+        const validateField = (input) => {
+            const value = input.value.trim();
+            let isValid = true;
+    
+            // Validar solo los campos obligatorios
+            if (requiredFields.includes(input.name)) {
+                isValid = value.length > 0; // No puede estar vacío
+            }
+    
+            // Validaciones personalizadas adicionales
+            if (input.name === "azimut") {
+                isValid = value === "" || (/^\d+$/.test(value) && parseInt(value) >= 0 && parseInt(value) <= 360);
+            } else if (["inclinacion", "largo_programado", "largo_real", "este", "norte", "cota"].includes(input.name) && value !== "") {
+                isValid = /^-?\d+(\.\d{1,3})?$/.test(value); // Números enteros o decimales
+            } else if (input.name === "fecha_inicio") {
+                isValid = !isNaN(Date.parse(value)); // Fecha válida
+            }
+    
+            return isValid;
+        };
+    
+        // Validar en tiempo real cada vez que un campo cambia
+        inputs.forEach((input) => {
+            input.addEventListener('input', () => validateField(input));
+        });
+    
+        // Validación específica del campo "azimut" (manteniendo el formato correcto)
+        azimutField.addEventListener("input", function () {
+            let value = this.value.trim();
+    
+            if (value !== "") {
+                value = parseInt(value, 10);
+                if (value < 0) {
+                    this.value = "";
+                } else if (value > 360) {
+                    this.value = 360;
+                }
+            }
+        });
+    
+        // Validar el formulario antes de enviarlo
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            let isFormValid = true;
+    
+            requiredFields.forEach((fieldName) => {
+                const field = document.querySelector(`[name="${fieldName}"]`);
+                if (field) {
+                    const valid = validateField(field);
+                    if (!valid) {
+                        isFormValid = false;
+                    }
+                }
+            });
+    
+            if (isFormValid) {
+                // Enviar el formulario si todo está correcto
+                const formData = new FormData(form);
+                $.LoadingOverlay("show");
+                $.ajax({
+                    url: '{% url "save_new_recomendacion" %}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        $.LoadingOverlay("hide");
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Recomendación Creada con éxito!',
+                                confirmButtonColor: '#ff00d9',
+                            }).then(() => {
+                                window.location.href = '{% url "manage_recomendacion" %}';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                titleText: 'Atención',
+                                text: response.message,
+                                confirmButtonColor: '#ff00d9',
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        $.LoadingOverlay("hide");
+                        Swal.fire({
+                            icon: 'error',
+                            titleText: 'Error al Crear Recomendación',
+                            text: 'Vuelva a intentarlo!',
+                            confirmButtonColor: '#ff00d9',
+                        });
+                    },
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    titleText: 'Formulario Incompleto',
+                    text: 'Por favor, complete todos los campos obligatorios antes de enviar.',
+                    confirmButtonColor: '#ff00d9',
+                });
+            }
+        });
+    });
+</script>
+<script>
+    var programa = document.getElementById('id_programa');
+    while (programa.firstChild) {
+        programa.removeChild(programa.firstChild);
+    }
+    programa.innerHTML = '<option value="">---------</option>';
+    var campana = document.getElementById('id_campana')
+    var optionPlaceholder = document.createElement('option');
+    optionPlaceholder.value = '';
+    optionPlaceholder.text = '---------';
+    optionPlaceholder.selected = true;
+    campana.addEventListener('change', function() {
+        var campanaId = this.value;
+        programa.innerHTML = '<option value="">---------</option>';
+        if (campanaId) {
+            $.LoadingOverlay("show");
+            $.ajax({
+                url: '{% url 'cargar_programas_por_campana' %}',
+                method: 'GET',
+                data: {
+                    'campana_id': campanaId
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $.LoadingOverlay("hide");
+                    var selectPrograma = document.getElementById('id_programa');
+                    data.forEach(function(programa) {
+                        var option = document.createElement('option');
+                        option.value = programa.id;
+                        option.text = programa.programa;
+                        selectPrograma.appendChild(option);
+                    });
+                },
+                error: function(error) {
+                    $.LoadingOverlay("hide");
+                }
+            });
+        }
+    });
+</script>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const pozoSelect = document.getElementById('id_pozo');
+        const sondaSelect = document.getElementById('id_sonda');
+
+        if (pozoSelect && sondaSelect) {
+            pozoSelect.addEventListener('change', function () {
+                const pozoNombre = this.value;
+                
+                // Limpiar sonda si no hay pozo seleccionado
+                if (!pozoNombre) {
+                    sondaSelect.innerHTML = '<option value="">---------</option>';
+                    return;
+                }
+
+                $.LoadingOverlay("show");
+                
+                $.ajax({
+                    url: '{% url "get_ultima_sonda_por_pozo" %}',
+                    data: {
+                        'pozo_nombre': pozoNombre
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        $.LoadingOverlay("hide");
+                        
+                        // Limpiamos el select de sonda actual
+                        sondaSelect.innerHTML = '';
+                        
+                        if (data.sonda_id) {
+                            // Creamos la ÚNICA opción permitida
+                            var option = document.createElement("option");
+                            option.value = data.sonda_id;
+                            option.text = data.sonda_nombre;
+                            option.selected = true;
+                            sondaSelect.appendChild(option);
+                            
+                            // (Opcional) Si quieres que visualmente se note bloqueado pero envíe el dato:
+                            // sondaSelect.style.pointerEvents = 'none'; 
+                            // sondaSelect.style.backgroundColor = '#e9ecef';
+                        } else {
+                            // Si no se encuentra (raro si viene de reportes aprobados), mostramos opción vacía
+                            sondaSelect.innerHTML = '<option value="">No se encontró sonda asociada</option>';
+                        }
+                    },
+                    error: function () {
+                        $.LoadingOverlay("hide");
+                        sondaSelect.innerHTML = '<option value="">Error al cargar sonda</option>';
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock javascript %}
+
+{% block messages %}
+{% endblock messages%}

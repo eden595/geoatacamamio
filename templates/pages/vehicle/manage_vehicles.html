@@ -1,0 +1,245 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Administración de Vehículos{% endblock %}
+
+{% block css %}
+    <link href="{% static 'css/jquery.dataTables.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/responsive.dataTables.min.css' %}" rel="stylesheet" />
+    <meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock css %}
+
+{% block content %}
+
+<div class="app-content main-content mt-0">
+    <div class="side-app"> 
+        <div class="main-container container-fluid"> 
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Administrar Vehículos</h1>
+                </div>
+                <div class="ms-auto pageheader-btn">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Registro Vehicular</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Administrar Vehículos</li>
+                    </ol>
+                </div>
+            </div> 
+
+            {% if request.user.role == "ADMINISTRADOR" %} 
+            <a class="btn btn-primary btn-size-new" href="{% url 'new_vehicle' %}">Nuevo Vehículo</a>
+            {% endif %}
+            <h5 class="mb-5"></h5>
+
+            <div class="card"> 
+                <div class="panel panel-primary">
+                    <div class="tab-menu-heading border-bottom-0"> 
+                        <div class="tabs-menu4 border-bottomo-sm"> 
+                            <nav class="nav d-sm-flex d-block"> 
+                                <a id="nav25" class="nav-link border border-bottom-0 br-sm-5 me-2 active" data-bs-toggle="tab" href="#tab25">Habilitados</a> 
+                                <a id="nav26" class="nav-link border border-bottom-0 br-sm-5 me-2" data-bs-toggle="tab" href="#tab26">Deshabilitados</a>
+                            </nav> 
+                        </div> 
+                    </div>
+                    <div class="panel-body tabs-menu-body"> 
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab25">
+                                <div class="row row-sm"> 
+                                    <table id="datatable-allusers" class="display nowrap" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Porcentaje</th>
+                                                <th>Patente</th>
+                                                <th>Tipo</th>
+                                                <th>Marca</th>
+                                                <th>Modelo</th>
+                                                <th>Faena</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>                            
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>                    
+                                    </table>
+                                </div>  
+                            </div>
+                            
+                            <div class="tab-pane" id="tab26"> 
+                                <div class="row row-sm"> 
+                                    <table id="datatable-allusers-des" class="display nowrap" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>Porcentaje</th>
+                                                <th>Patente</th>
+                                                <th>Tipo</th>
+                                                <th>Marca</th>
+                                                <th>Modelo</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>                            
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>                    
+                                    </table>
+                                </div>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h5 class="mb-5"></h5> 
+        {% if request.user.role == "ADMINISTRADOR" %} 
+        <div class="main-container container-fluid"> 
+            <a class="btn btn-secondary" href="{% url 'dashboard' %}">Regresar</a> 
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'js/jquery-3.7.0.js'%}"></script>
+<script src="{% static 'js/jquery.dataTables.min1.13.7.js'%}"></script>
+<script src="{% static 'js/dataTables.responsive.min2.5.0.js'%}"></script>
+
+<script>
+    // Variables Globales
+    const pdfViewUrl = '{% url "vehicle_pdf_view" %}';
+    const classForm = '.vehicle-form';
+    const urlLenguage = '{% static "json/es-CL.json" %}';
+    const apiUrl = window.location.href; 
+    
+    // Variables para las instancias de las tablas
+    let tableHab;
+    let tableDes;
+
+    // --- FUNCIONES SOPORTE ---
+    function getCsrfToken() {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    }
+
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        if (typeof $.LoadingOverlay !== "undefined") $.LoadingOverlay("show");
+        
+        $.ajax({
+            url: pdfViewUrl, method: 'POST', headers: { 'X-CSRFToken': getCsrfToken() },
+            data: formData, processData: false, contentType: false,
+            success: function(response) {
+                if (typeof $.LoadingOverlay !== "undefined") $.LoadingOverlay("hide");
+                if (response.pdf_url) {
+                    Swal.fire({
+                        icon: 'success', title: 'Documento Creado!', text: 'Descargando...', confirmButtonColor: '#ff00d9',
+                    }).then(() => {
+                        var link = document.createElement('a'); link.href = response.pdf_url;
+                        link.download = response.pdf_url.split('/').pop(); document.body.appendChild(link);
+                        link.click(); document.body.removeChild(link);
+                    });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: response.error || 'Intente nuevamente', confirmButtonColor: '#ff00d9' });
+                }
+            },
+            error: function() {
+                if (typeof $.LoadingOverlay !== "undefined") $.LoadingOverlay("hide");
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Error de conexión', confirmButtonColor: '#ff00d9' });
+            }
+        });
+    }
+
+    function updateCsrfAndRegister(classForm) {
+        const csrfToken = getCsrfToken();
+        $(classForm).find('input[name="csrfmiddlewaretoken"]').val(csrfToken);
+    }
+
+    // --- INICIALIZACIÓN ---
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // 1. Tabla Habilitados (Usando new DataTable como en el ejemplo que funciona)
+        tableHab = new DataTable('#datatable-allusers', {
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: apiUrl,
+                type: 'GET',
+                data: { "estado": true }
+            },
+            columns: [
+                { data: null, defaultContent: '', className: 'dtr-control', orderable: false }, 
+                { data: 'porcentaje' }, { data: 'patente' }, { data: 'tipo' }, { data: 'marca' }, 
+                { data: 'modelo' }, { data: 'faena' }, { data: 'estado' }, { data: 'acciones', orderable: false }
+            ],
+            columnDefs: [ { searchable: false, targets: [0, 1, 8] }, { orderable: false, targets: [0, 8] } ],
+            language: { url: urlLenguage },
+            responsive: { details: { type: 'column', target: 'td.dtr-control' } }
+        });
+
+        // 2. Tabla Deshabilitados
+        tableDes = new DataTable('#datatable-allusers-des', {
+            serverSide: true,
+            processing: true,
+            ajax: {
+                url: apiUrl,
+                type: 'GET',
+                data: { "estado": false }
+            },
+            columns: [
+                { data: null, defaultContent: '', className: 'dtr-control', orderable: false }, 
+                { data: 'porcentaje' }, { data: 'patente' }, { data: 'tipo' }, { data: 'marca' }, 
+                { data: 'modelo' }, { data: 'estado' }, { data: 'acciones', orderable: false }
+            ],
+            columnDefs: [ { searchable: false, targets: [0, 1, 7] }, { orderable: false, targets: [0, 7] } ],
+            language: { url: urlLenguage },
+            responsive: { details: { type: 'column', target: 'td.dtr-control' } }
+        });
+
+        // --- EVENTOS (Delegación JQuery) ---
+        
+        // PDF Form
+        $(document).on('submit', classForm, handleFormSubmit);
+
+        // Actualizar CSRF en responsive
+        $('#datatable-allusers').on('draw.dt', () => updateCsrfAndRegister(classForm));
+        $('#datatable-allusers-des').on('draw.dt', () => updateCsrfAndRegister(classForm));
+
+        // --- SOLUCIÓN DEL ERROR AL ELIMINAR ---
+        // Usamos delegación al 'document' para atrapar los botones creados por DataTables
+        $(document).on('submit', '.status-form', function(e){
+            e.preventDefault(); // ¡ESTO ES LO MÁS IMPORTANTE! Evita la recarga y el JSON crudo.
+            
+            var form = this;
+            var formData = new FormData(form);
+            var url = $(form).attr('action');
+
+            if (typeof $.LoadingOverlay !== "undefined") $.LoadingOverlay("show");
+
+            $.ajax({
+                url: url, type: 'POST', data: formData, processData: false, contentType: false,
+                success: function(response) {
+                    if (typeof $.LoadingOverlay !== "undefined") $.LoadingOverlay("hide");
+                    
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success', title: 'Éxito', text: response.message, confirmButtonColor: '#ff00d9',
+                        }).then(() => {
+                            // Recargar las tablas usando las instancias globales
+                            tableHab.ajax.reload(null, false);
+                            tableDes.ajax.reload(null, false);
+                        });
+                    } else {
+                        Swal.fire({ icon: 'warning', title: 'Acción Denegada', text: response.message, confirmButtonColor: '#ff00d9' });
+                    }
+                },
+                error: function() {
+                    if (typeof $.LoadingOverlay !== "undefined") $.LoadingOverlay("hide");
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'Error de servidor.', confirmButtonColor: '#ff00d9' });
+                }
+            });
+        });
+    });
+</script>
+{% endblock javascript %}

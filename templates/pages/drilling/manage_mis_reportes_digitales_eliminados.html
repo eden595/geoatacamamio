@@ -1,0 +1,100 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Reportes Digitales Eliminados{% endblock %}
+
+{% block css %}
+    <link href="{% static 'css/jquery.dataTables.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/responsive.dataTables.min.css' %}" rel="stylesheet" />
+    <meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock css %}
+
+{% block content %}
+
+<div class="app-content main-content mt-0">
+    <div class="side-app"> 
+        <div class="main-container container-fluid"> 
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Reportes Digitales Eliminados</h1>
+                </div>
+                <div class="ms-auto pageheader-btn">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Reportes Digitales</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Mis Reportes</li>
+                    </ol>
+                </div>
+            </div> 
+            
+            <h5 class="mb-5"></h5>
+            <div class="row row-sm"> 
+                <table id="datatable-allusers" class="display nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>#</th>
+                            <th>Fecha - Hora</th>
+                            <th>Sondaje-N°-Gemelo</th>
+                            <th>Sonda</th>
+                            <th>Controlador</th>
+                            <th>Turno</th>                            
+                            <th>Acciones Reportes</th>  
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>                    
+                </table>
+            </div>            
+        </div>
+        <h5 class="mb-5"></h5> 
+        <div class="main-container container-fluid"> 
+            <a class="btn btn-secondary" href="{% url 'dashboardSondaje' %}">Regresar</a> 
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'js/jquery-3.7.0.js'%}"></script>
+<script src="{% static 'js/jquery.dataTables.min1.13.7.js'%}"></script>
+<script src="{% static 'js/dataTables.responsive.min2.5.0.js'%}"></script>
+
+<script>
+    // Variables globales necesarias
+    const idDataTable = '#datatable-allusers';
+    const dataUrl = window.location.href; // La misma URL actual
+    const urlLenguage = '{% static "json/es-CL.json" %}';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const table = new DataTable(idDataTable, {
+            serverSide: true, // Activamos modo servidor
+            processing: true, // Mostramos indicador de carga
+            ajax: {
+                url: dataUrl, 
+                type: 'GET'
+            },
+            columns: [
+                { data: null, defaultContent: '', className: 'dtr-control', orderable: false }, // 0: Expander
+                { data: 'id_checklist' }, // 1: ID
+                { data: 'fecha' },        // 2: Fecha
+                { data: 'sondaje' },      // 3: Sondaje
+                { data: 'sonda' },        // 4: Sonda
+                { data: 'creador' },      // 5: Controlador
+                { data: 'turno' },        // 6: Turno
+                { data: 'acciones', orderable: false } // 7: Botones (HTML que viene del server)
+            ],
+            columnDefs: [
+                { searchable: false, targets: [0, 7] }, // Desactivar búsqueda en botones y expander
+                { orderable: false, targets: [0, 7] }
+            ],
+            order: [[2, 'desc']], // Ordenar por fecha (columna index 2) por defecto
+            language: { url: urlLenguage },
+            responsive: {
+                details: { type: 'column', target: 'td.dtr-control' }
+            }
+        });
+    });
+</script>
+{% endblock javascript %}

@@ -1,0 +1,230 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Revisar Reportes Digitales{% endblock %}
+
+{% block css %}
+    <link href="{% static 'css/jquery.dataTables.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/responsive.dataTables.min.css' %}" rel="stylesheet" />
+{% endblock css %}
+
+{% block content %}
+
+<div class="app-content main-content mt-0">
+    <div class="side-app"> <!-- CONTAINER -->
+        <div class="main-container container-fluid"> <!-- PAGE-HEADER -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Revisar Reportes Digitales</h1>
+                </div>
+                <div class="ms-auto pageheader-btn">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0);">Reportes Digitales</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Revisar Reportes</li>
+                    </ol>
+                </div>
+            </div> <!-- PAGE-HEADER END --> <!-- row -->  
+            
+            <h5 class="mb-5"></h5>
+            <div class="row row-sm"> 
+                <table id="datatable-allusers" class="display nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>#</th>
+                            <th>Fecha - Hora</th>                            
+                            <th>Sondaje-N°-Gemelo</th>
+                            <th>Sonda</th>
+                            <th>Controlador</th>
+                            <th>Turno</th>                            
+                            <th>Estado Reporte</th>
+                            <th>Acciones Reporte</th>  
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reporte in reportes %}
+                            {% if reporte.progreso == 'Por Revisar' or reporte.progreso == 'Corregido' %}
+                            <tr>
+                                <td class="dtr-control"></td>
+                                <td>{{ reporte.id_checklist }}</td>
+                                <td>{{ reporte.fecha_checklist|date:"Y-m-d" }} - {{ reporte.fecha_checklist|date:"H:i" }}</td>  
+                                <td>{{ reporte.sondajeCodigo }}-{{ reporte.sondajeSerie }}{% if reporte.sondajeEstado %}{{ reporte.get_sondajeEstado_display }} {% else%} {% endif %}</td>
+                                <td>{{ reporte.sonda }}</td>
+                                <td>{{ reporte.creador }}</td>
+                                <td>{{ reporte.get_turno_display }}</td>
+                                <td>{{ reporte.progreso }}</td>
+                                <td class="form-inline-btn">
+                                    <form action="{% url 'editar_reporte_digital' %}" method="POST" >
+                                        {% csrf_token %}
+                                        <input type="hidden" name="id" value="{{ reporte.id_checklist }}">
+                                        <input type="hidden" name="origin" value="check_report">
+                                        <button type="submit" class="btn btn-info btn-size-edit">Editar</button>
+                                    </form>
+                                    {% if reporte.progreso == 'Por Revisar' or reporte.progreso == 'Corregido' %}
+                                        <form action="{% url 'progreso_reporte_digital_aprobar' %}" method="POST" >
+                                            {% csrf_token %}
+                                            <input type="hidden" name="id" value="{{ reporte.id }}">
+                                            <button {% if not reporte.completado %} disabled {%endif%} type="submit" class="btn btn-primary btn-size-edit">Aprobar</button>
+                                        </form>
+                                        <form action="{% url 'progreso_reporte_digital_corregir' %}" method="POST" >
+                                            {% csrf_token %}
+                                            <input type="hidden" name="id" value="{{ reporte.id}}">
+                                            <button {% if not reporte.completado %} disabled {%endif%} type="submit" class="btn btn-warning btn-size-edit">Corregir</button>
+                                        </form>
+                                        {% if request.user.role == "ADMINISTRADOR" %} 
+                                        <form action="{% url 'eliminar_reporte_digital_action' %}" method="POST" class="form-delete">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="id" value="{{ reporte.id }}">
+                                            <button type="submit" class="btn btn-danger btn-size-edit">Eliminar</button>
+                                        </form>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>                         
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>                    
+                </table>
+            </div>            
+        </div>
+        <h5 class="mb-5"></h5> 
+        <div class="main-container container-fluid"> 
+            <a class="btn btn-secondary" href="{% url 'dashboardSondaje' %}">Regresar</a> 
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+<script src="{% static 'js/jquery-3.7.0.js'%}"></script>
+<script src="{% static 'js/jquery.dataTables.min1.13.7.js'%}"></script>
+<script src="{% static 'js/dataTables.responsive.min2.5.0.js'%}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        // 1. INICIALIZACIÓN DE DATATABLE
+        // ==============================
+        var table = new DataTable('#datatable-allusers', {
+            columnDefs: [
+                {
+                    className: 'dtr-control',
+                    orderable: false,
+                    targets: 2
+                }
+            ],
+            language: {
+                url: '{% static "json/es-CL.json" %}',
+            },
+            columnDefs: [    
+                { searchable: false, targets: [0,1,4,5] },
+                { orderable: false, targets: [0]}  
+            ],
+            responsive: {
+                details: {
+                    type: 'column'
+                }
+            }
+        });
+
+        // 2. FUNCIÓN PARA RECARGAR LA TABLA (AJAX HYBRIDO)
+        // ================================================
+        function reloadTable() {
+            var currentUrl = window.location.href;
+
+            $.ajax({
+                url: currentUrl, // Solicita la misma página a Django
+                type: 'GET',
+                success: function(response) {
+                    // Parsea el HTML que devuelve Django
+                    var parser = new DOMParser();
+                    var doc = parser.parseFromString(response, 'text/html');
+                    
+                    // Extrae solo las filas de la tabla nueva
+                    var newRows = $(doc).find('#datatable-allusers tbody tr');
+
+                    // API DataTables: Limpia y añade los datos nuevos
+                    table.clear(); 
+                    
+                    if (newRows.length > 0) {
+                        table.rows.add(newRows);
+                    }
+                    
+                    // Redibuja manteniendo la paginación actual (false)
+                    table.draw(false); 
+                },
+                error: function() {
+                    console.error('Error al actualizar la tabla en segundo plano.');
+                }
+            });
+        }
+
+        // 3. LÓGICA DE ELIMINACIÓN
+        // ========================
+        $('#datatable-allusers').on('submit', '.form-delete', function(e) {
+            e.preventDefault(); 
+            var form = $(this);
+            var actionUrl = form.attr('action');
+            var formData = form.serialize();
+
+            // --- A. DEFINIR EL TEXTO DE DIÁLOGO ORIGINAL ---
+            // Detectamos si estamos en el historial ("Todos los reportes") para usar tu mensaje de advertencia fuerte
+            var isHistorial = window.location.href.indexOf('todos_reportes') > -1;
+            
+            var confirmTitle = '¿Estás seguro?';
+            var confirmText = "Esta acción enviará el reporte a la bandeja de eliminados.";
+            var confirmBtnColor = '#d33';
+
+            if (isHistorial) {
+                confirmText = "Estás a punto de eliminar un reporte APROBADO. Esta acción lo enviará a la bandeja de eliminados.";
+            }
+
+            // --- B. MOSTRAR SWEETALERT ---
+            Swal.fire({
+                title: confirmTitle,
+                text: confirmText,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: confirmBtnColor,
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    
+                    // --- C. PETICIÓN AJAX AL BACKEND ---
+                    $.ajax({
+                        url: actionUrl,
+                        type: 'POST',
+                        data: formData,
+                        // Header clave para que tu view.py detecte "is_ajax"
+                        headers: {'X-Requested-With': 'XMLHttpRequest'}, 
+                        
+                        success: function(response) {
+                            if(response.status === 'success') {
+                                // Muestra el mensaje EXACTO que viene de tu views.py
+                                Swal.fire(
+                                    '¡Eliminado!',
+                                    response.message,
+                                    'success'
+                                );
+                                // Recarga la tabla visualmente sin F5
+                                reloadTable();
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        },
+                        error: function(xhr) {
+                            var msg = 'Ocurrió un error inesperado.';
+                            if(xhr.responseJSON && xhr.responseJSON.message) {
+                                msg = xhr.responseJSON.message;
+                            }
+                            Swal.fire('Error', msg, 'error');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock javascript %}

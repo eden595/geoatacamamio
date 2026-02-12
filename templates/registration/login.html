@@ -1,0 +1,57 @@
+{% extends 'main/base_login.html' %} 
+{% load static %} 
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block title %}Acceso de Usuarios{% endblock %} 
+
+{% block css %} 
+{% endblock css %} 
+
+{% block content %}
+{% if user.is_authenticated %} 
+    <meta http-equiv="REFRESH" content="0;url={% url 'select' %}">
+{% else %}
+<div class="page">
+    <div>
+        <div class="container-login100">
+            <div class="wrap-login100 p-0">
+                <div class="card-body">
+                    <div class="col col-login mx-auto text-center">
+                        <a href="#" class="text-center"><img src="{% static 'images/logo/logobg.jpeg' %}" class="header-brand-img" alt=""/></a>
+                        <span href="#" class="login100-form-title"> Panel de Ingreso </span>
+                    </div>  
+                    <form class="login100-form validate-form" method="POST">
+                        {% csrf_token %}
+                        <label class="form-label" for="text">RUT</label>
+                        {% render_field form.username type="text" class="form-control" id="id_username" name="username" placeholder="Sin puntos ni guión" requerided="True" maxlength="12" onkeyup="formatUsuario(this)"%}
+                        <p class="mb-4"></p>
+                        <label class="form-label" for="typePasswordX">Contraseña</label> 
+                        {% render_field form.password type="password" class="form-control inputs" id="id_password" placeholder="Contraseña" requerided="True" %}
+                        <div class="text-end pt-1">
+                            <p class="mb-0"><a href="{% url 'password_reset' %}" class="text-primary ms-1">Olvidó la contraseña?</a></p>
+                        </div>
+                        <div class="container-login100-form-btn">
+                            <button type="submit" class="login100-form-btn btn-primary">Ingresar</button>
+                        </div>
+                        <div class="text-center pt-3">
+                            <p class="text-dark mb-0">No estas registrado?<a href="{% url 'register' %}" class="text-primary ms-1">Crear una cuenta</a></p>
+                        </div>
+                    </form>
+                </div>                
+            </div>
+        </div>
+    </div>
+    {% include 'main/footer-login.html' %}
+</div>
+{% endif %}
+
+{% endblock content %} 
+
+{% block javascript %} 
+<script type="text/javascript">        
+    function formatUsuario(id_username)
+    {id_username.value=id_username.value.replace(/[.-]/g, '')
+    .replace( /^(\d{1,2})(\d{3})(\d{3})(\w{1})$/, '$1.$2.$3-$4')}
+</script>
+{% endblock javascript %}

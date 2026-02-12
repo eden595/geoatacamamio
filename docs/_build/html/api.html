@@ -1,0 +1,636 @@
+
+<!DOCTYPE html>
+
+
+<html lang="es" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Api &#8212; documentación de Geoatacama - Versión Web</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=ea490ea2"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="_static/translations.js?v=f85f4cfb"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api';</script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="prev" title="Vehicle" href="modulos/vehicle.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="es"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Saltar al contenido principal</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Volver arriba</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Advertencia de versión"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logobg.png" class="logo__image only-light" alt="documentación de Geoatacama - Versión Web - Home"/>
+    <script>document.write(`<img src="_static/logobg.png" class="logo__image only-dark" alt="documentación de Geoatacama - Versión Web - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Búsqueda</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="antesDeComenzar.html">Antes de Comenzar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arquitectura.html">Arquitectura del Sistema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="databases.html">Database</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="secciones.html">Secciones</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="modulos/core.html">Core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modulos/checklist.html">Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modulos/drilling.html">Drilling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modulos/geoatacama.html">Geoatacama</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modulos/machine.html">Machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modulos/maintenance.html">Maintenance</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="modulos/messenger.html">Messenger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modulos/mining.html">Mining</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modulos/offline.html">Offline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modulos/planning.html">Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modulos/user.html">User</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modulos/vehicle.html">Vehicle</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Api</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/Cconelli/Geoatacama" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Repositorio de origen"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Descarga esta pagina">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/api.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Descargar archivo fuente"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Imprimir en PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Modo de pantalla completa"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="claro/oscuro" aria-label="claro/oscuro" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Búsqueda" aria-label="Búsqueda" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Api</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contenido </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importaciones-principales">Importaciones Principales</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#clases-y-metodos">Clases y Métodos</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="api">
+<h1>Api<a class="headerlink" href="#api" title="Link to this heading">#</a></h1>
+<p>Este módulo implementa una <code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">REST</span></code> utilizando <code class="docutils literal notranslate"><span class="pre">Django</span> <span class="pre">REST</span> <span class="pre">Framework</span></code> (<code class="docutils literal notranslate"><span class="pre">DRF</span></code>) para gestionar datos relacionados con perforaciones,
+vehículos y reportes operacionales dentro de un sistema de gestión de perforaciones mineras.</p>
+<p>Funciones principales de la <code class="docutils literal notranslate"><span class="pre">API</span></code>:
+- Consultar datos de perforaciones, vehículos y reportes operacionales.
+- Registrar reportes operacionales, incluyendo perforaciones, controles horarios, insumos y observaciones.
+- Gestionar checklists de materiales usados en perforaciones.</p>
+<section id="importaciones-principales">
+<h2>Importaciones Principales<a class="headerlink" href="#importaciones-principales" title="Link to this heading">#</a></h2>
+<p>Este módulo utiliza <code class="docutils literal notranslate"><span class="pre">Django</span> <span class="pre">REST</span> <span class="pre">Framework</span></code> para manejar las vistas de la <code class="docutils literal notranslate"><span class="pre">API</span></code> y la interacción con la base de datos.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Librerías principales:</dt><dd><ul>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">Django</span> <span class="pre">REST</span> <span class="pre">Framework</span></code> (<code class="docutils literal notranslate"><span class="pre">DRF</span></code>):</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">APIView</span></code>, <code class="docutils literal notranslate"><span class="pre">Response</span></code>, <code class="docutils literal notranslate"><span class="pre">generics</span></code>, <code class="docutils literal notranslate"><span class="pre">status</span></code> → Manejo de vistas y respuestas <code class="docutils literal notranslate"><span class="pre">HTTP</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">decorators</span></code> → Uso de decoradores para definir vistas.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Modelos de base de datos:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">core.models</span></code> → Perforaciones (Perforistas, Sondas, Sondajes, etc.).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user.models</span></code> → Usuarios y autenticación (User).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">drilling.models</span></code> → Reportes operacionales (ReportesOperacionales, DetallesPerforaciones, etc.).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vehicle.models</span></code> → Gestión de vehículos (Vehiculo, InformacionTecnicaVehiculo, etc.).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mining.models</span></code> → Asignaciones de vehículos a faenas (VehiculoAsignado).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">checklist.models</span></code> → Checklists de materiales (ChecklistMaterialesSonda, ChecklistMaterialesCaseta).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Serializadores</span></code> (<code class="docutils literal notranslate"><span class="pre">.serializers</span></code>) → Transforman modelos en JSON y viceversa.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Transacciones y validaciones:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">transaction.atomic()</span></code> → Garantiza la consistencia en operaciones de base de datos.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ValidationError</span></code> → Manejo de errores personalizados en validaciones.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Consultas avanzadas:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Q</span></code> → Construcción de consultas dinámicas.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Manejo de fechas:</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">timezone</span></code>, <code class="docutils literal notranslate"><span class="pre">datetime</span></code> → Facilitan la gestión de fechas y horas en los reportes.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="clases-y-metodos">
+<h2>Clases y Métodos<a class="headerlink" href="#clases-y-metodos" title="Link to this heading">#</a></h2>
+<p>Este módulo define varias vistas basadas en clases (<code class="docutils literal notranslate"><span class="pre">APIView</span></code>) para manejar operaciones <code class="docutils literal notranslate"><span class="pre">CRUD</span></code> en la <code class="docutils literal notranslate"><span class="pre">API</span></code>.</p>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt>DataPerforacionesListView (<code class="docutils literal notranslate"><span class="pre">APIView</span></code>)</dt><dd><ul class="simple">
+<li><p><strong>Propósito</strong>: Recupera datos activos de perforaciones, perforistas, sondas y reportes operacionales.</p></li>
+<li><p><strong>Método</strong>: <code class="docutils literal notranslate"><span class="pre">GET</span></code></p></li>
+<li><p><strong>Salida</strong>: <code class="docutils literal notranslate"><span class="pre">JSON</span></code> con perforaciones activas.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>VehiculosListView (<code class="docutils literal notranslate"><span class="pre">APIView</span></code>)</dt><dd><ul class="simple">
+<li><p><strong>Propósito</strong>: Obtiene la lista de vehículos registrados.</p></li>
+<li><p><strong>Método</strong>: <code class="docutils literal notranslate"><span class="pre">GET</span></code></p></li>
+<li><p><strong>Salida</strong>: <code class="docutils literal notranslate"><span class="pre">JSON</span></code> con vehículos.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>VehiculosKilometrajesListView (<code class="docutils literal notranslate"><span class="pre">APIView</span></code>)</dt><dd><ul class="simple">
+<li><p><strong>Propósito</strong>: Consulta los registros de kilometraje de vehículos.</p></li>
+<li><p><strong>Método</strong>: <code class="docutils literal notranslate"><span class="pre">GET</span></code></p></li>
+<li><p><strong>Salida</strong>: <code class="docutils literal notranslate"><span class="pre">JSON</span></code> con kilometrajes de vehículos.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>VehiculosFaenasListView (<code class="docutils literal notranslate"><span class="pre">APIView</span></code>)</dt><dd><ul class="simple">
+<li><p><strong>Propósito</strong>: Obtiene asignaciones de vehículos a faenas.</p></li>
+<li><p><strong>Método</strong>: <code class="docutils literal notranslate"><span class="pre">GET</span></code></p></li>
+<li><p><strong>Salida</strong>: <code class="docutils literal notranslate"><span class="pre">JSON</span></code> con asignaciones.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>SaveReporteOperacionalAPI (<code class="docutils literal notranslate"><span class="pre">APIView</span></code>)</dt><dd><ul class="simple">
+<li><p><strong>Propósito</strong>: Guarda reportes operacionales y sus detalles asociados.</p></li>
+<li><p><strong>Método</strong>: <code class="docutils literal notranslate"><span class="pre">POST</span></code></p></li>
+<li><p><strong>Entrada</strong>: <code class="docutils literal notranslate"><span class="pre">JSON</span></code> con datos del reporte.</p></li>
+<li><dl class="simple">
+<dt><strong>Tipos de datos procesados</strong>:</dt><dd><ul>
+<li><p><strong>reporte</strong> → Crea un nuevo ReportesOperacionales.</p></li>
+<li><p><strong>perforacion</strong> → Registra detalles en DetallesPerforaciones.</p></li>
+<li><p><strong>controlHorario</strong> → Guarda registros en ControlesHorarios.</p></li>
+<li><p><strong>longitud</strong> → Almacena información de pozos (LongitudPozos).</p></li>
+<li><p><strong>insumos</strong> → Registra insumos usados (Insumos).</p></li>
+<li><p><strong>aditivo</strong> → Guarda aditivos (DetalleAditivos).</p></li>
+<li><p><strong>observacion</strong> → Almacena observaciones (ObservacionesReportes).</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Se usa <code class="docutils literal notranslate"><span class="pre">transaction.atomic()</span></code> para garantizar la consistencia de los datos.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>SaveReporteMaterialesSonda (<code class="docutils literal notranslate"><span class="pre">APIView</span></code>)</dt><dd><ul class="simple">
+<li><p><strong>Propósito</strong>: Maneja checklists de materiales usados en perforaciones.</p></li>
+<li><p><strong>Método</strong>: POST</p></li>
+<li><p><strong>Entrada</strong>: JSON con detalles del checklist.</p></li>
+<li><dl class="simple">
+<dt><strong>Tipos de datos procesados</strong>:</dt><dd><ul>
+<li><p><strong>checklistEntrada</strong> → Registra materiales al inicio de la operación.</p></li>
+<li><p><strong>checklistSalida</strong> → Registra materiales al final de la operación.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Utiliza transacciones para mantener la integridad de los datos.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="modulos/vehicle.html"
+       title="página anterior">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">anterior</p>
+        <p class="prev-next-title">Vehicle</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contenido
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importaciones-principales">Importaciones Principales</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#clases-y-metodos">Clases y Métodos</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+Por Isamax
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, Isamax.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
